@@ -8,15 +8,15 @@ const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
 router.get('/products', auth, async (req, res) => {
+
     let usuario=req.session.usuario
-    res.status(200).render('index', {
-        usuario, isLogin:req.session.usuario
-    })
+    
     const products = await ProductService.getAllProducts(req.query);
 
     res.render(
         'index',
         {
+            usuario, isLogin:req.session.usuario,
             title: 'Productos',
             style: 'index.css',
             products: JSON.parse(JSON.stringify(products.docs)),
@@ -28,6 +28,7 @@ router.get('/products', auth, async (req, res) => {
                 exist: products.nextLink ? true : false,
                 link: products.nextLink
             }
+            
         }
     )
 });
