@@ -41,6 +41,7 @@ btnSubmit.addEventListener("click", async(e)=>{
         }, 3000);
     }else{
         // window.location.href=`/perfil?mensaje=Registro exitoso para ${datos.nuevoUsuario.email}`
-        window.location.href=`/perfil`
+        //window.location.href=`/perfil`
+        window.location.href=`/products`
     }
 })

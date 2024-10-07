@@ -31,7 +31,7 @@ app.use(sessions({
     saveUninitialized: true,
     // store: 
 }))
-app.use(express.static("./src/public"))
+//app.use(express.static("./src/public"))
 app.use(express.static('public'));
 
 

@@ -7,7 +7,7 @@ const router = Router();
 const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
-router.get('/products', auth, async (req, res) => {
+router.get('/products', async (req, res) => {
 
     let usuario=req.session.usuario
     
