@@ -50,17 +50,14 @@ if(mensaje){
 btnSubmit.addEventListener("click", async (e) => {
     e.preventDefault();
     let email = inputEmail.value;
-    let password = inputPassword.value;
-    
+    let password = inputPassword.value;    
     if (!email || !password) {
         alert("Complete los datos");
         return;
     }
-
     let body = {
         email, password
     };
-
     let respuesta = await fetch("/api/sessions/login", {
         method: "post",
         headers: {
@@ -68,22 +65,18 @@ btnSubmit.addEventListener("click", async (e) => {
         },
         body: JSON.stringify(body)
     });
-
     let datos = await respuesta.json();
-
     if (respuesta.status >= 400) {
         divMensajes.textContent = datos.error;
         setTimeout(() => {
             divMensajes.textContent = "";
         }, 3000);
     } else {
-        // Verifica si el correo es 'adm@juan.com'
-        if (email === "adm@juan.com") {
-            // Redirige al administrador a /products
-            window.location.href = "/realtimeproducts";
+        // Redirige según el rol
+        if (datos.usuario.rol === "Administrador") {
+            window.location.href = "/realtimeproducts"; // Página para administradores
         } else {
-            // Redirige a otros usuarios a /realtimeproducts
-            window.location.href = "/products";
+            window.location.href = "/products"; // Página para usuarios
         }
     }
 });

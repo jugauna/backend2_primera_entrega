@@ -39,6 +39,7 @@ router.get('/realtimeproducts', auth, async (req, res) => {
     res.render(
         'realTimeProducts',
         {
+            usuario, isLogin:req.session.usuario,
             title: 'Productos',
             style: 'index.css',
             products: JSON.parse(JSON.stringify(products.docs))

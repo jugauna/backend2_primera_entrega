@@ -20,17 +20,16 @@ export const initPassport=()=>{
             },
             async(req, username, password, done)=>{
                 try {
-                    let {nombre}=req.body
-                    if(!nombre){
-                        return done(null, false)
-                    }
-                    
+                    let {nombre, rol}=req.body
+                    if(!nombre || !rol){
+                        return done(null, false, { message: "Nombre y rol son obligatorios" })
+                    }                    
                     let existe=await UsuariosManager.getBy({email:username})
                     if(existe){
                         return done(null, false)
                     }
                     password=generaHash(password)
-                    let nuevoUsuario=await UsuariosManager.create({nombre, email:username, password})
+                    let nuevoUsuario=await UsuariosManager.create({nombre, email:username, password, rol})
                     console.log(`Registro por passport...!!!`)
                     return done(null, nuevoUsuario)
                 } catch (error) {
@@ -54,7 +53,7 @@ export const initPassport=()=>{
                     if(!validaHash(password, usuario.password)){
                         return done(null, false)
                     }
-                    //console.log(`login OK con Passport-Local...!!!`)
+                    console.log(`login OK con Passport-Local...!!!`)
                     return done(null, usuario)
                 } catch (error) {
                     return done(error)

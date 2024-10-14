@@ -21,18 +21,29 @@ router.post(
     }
 )
 
+// router.post(
+//     "/login", 
+//     passport.authenticate("login", {failureRedirect:"/api/sessions/error"}),
+//     (req, res)=>{
+//         req.session.usuario=req.user
+//         //console.log(req.user.email)
+//         console.log(`login OK con Passport-Local...!!!`)
+//         // si sale bien el authenticate, passport deja un req.user, con los datos del usuario
+//         res.setHeader('Content-Type','application/json');
+//         return res.status(200).json({payload:"Login correcto", usuario:req.user});
+//     }
+// )
+
 router.post(
     "/login", 
-    passport.authenticate("login", {failureRedirect:"/api/sessions/error"}),
-    (req, res)=>{
-        req.session.usuario=req.user
-        console.log(req.user.email)
-        //console.log(`login OK con Passport-Local...!!!`)
-        // si sale bien el authenticate, passport deja un req.user, con los datos del usuario
+    passport.authenticate("login", { failureRedirect: "/api/sessions/error" }),
+    (req, res) => {
+        req.session.usuario = req.user;
+        console.log(req.user.rol)
         res.setHeader('Content-Type','application/json');
-        return res.status(200).json({payload:"Login correcto", usuario:req.user});
+        return res.status(200).json({payload:"Login correcto", usuario:req.user});        
     }
-)
+);
 
 
 

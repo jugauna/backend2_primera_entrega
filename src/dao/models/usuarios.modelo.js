@@ -33,6 +33,7 @@ export const usuariosModelo=mongoose.model(
             }, 
             apellido: String, 
             password: String,
+            rol: String,
         },
         {
             timestamps:true, 
