@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { productDBService } from '../services/productDBService.js';
 import { uploader } from '../utils/multerUtil.js';
+//import { auth } from '../middleware/auth.js';
 
 const router = Router();
 const ProductService = new productDBService();
 
 router.get('/', async (req, res) => {
+//router.get('/', auth, async (req, res) => {
     const result = await ProductService.getAllProducts(req.query);
 
     res.send({

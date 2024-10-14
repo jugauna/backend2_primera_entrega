@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { UsuariosManagerMongo as UsuariosManager } from '../dao/UsuariosManagerMONGO.js';
+import { UsuariosManager } from '../dao/UsuariosManager.js';
 import crypto from "crypto"
 import { config } from '../config/config.js';
+import passport from 'passport';
 export const router=Router()
 
 router.post('/registro',async(req,res)=>{
@@ -19,14 +20,14 @@ router.post('/registro',async(req,res)=>{
             res.setHeader('Content-Type','application/json');
             return res.status(400).json({error:`Ya existe un usuario con email ${email}`})
         }
-        
+    
         password=crypto.createHmac("sha256", config.SECRET).update(password).digest("hex")
 
         let nuevoUsuario=await UsuariosManager.create({nombre, email, password, rol})
     
         res.setHeader('Content-Type','application/json')
         res.status(201).json({mensaje:"Registro exitoso", nuevoUsuario})
-        
+
     } catch (error) {
         console.log(error);
         res.setHeader('Content-Type','application/json');
@@ -45,8 +46,7 @@ router.post("/login", async(req, res)=>{
         res.setHeader('Content-Type','application/json');
         return res.status(400).json({error:`Complete datos...!!!`})
     }
-
-    try {
+     try {
         password=crypto.createHmac("sha256", config.SECRET).update(password).digest("hex")
         let usuario=await UsuariosManager.getBy({email, password})
         if(!usuario){
@@ -54,9 +54,7 @@ router.post("/login", async(req, res)=>{
             return res.status(401).json({error:`Credenciales inválidas`})
         }
         delete usuario.password // borrar datos sensibles
-
         req.session.usuario=usuario
-
         res.setHeader('Content-Type','application/json');
         return res.status(200).json({mensaje:"Login exitoso", usuarioLogueado: usuario});
     } catch (error) {
@@ -85,5 +83,48 @@ router.get("/logout", (req, res)=>{
             res.setHeader('Content-Type','application/json');
             return res.status(200).json({payload:"Logout exitoso...!!!"});
         }
+    })
+})
+
+router.get("/error", (req, res)=>{
+    res.setHeader('Content-Type','application/json');
+    return res.status(401).json({error:`Error al autenticar`})
+})
+
+
+router.get('/github',
+    passport.authenticate("github", {}),    
+)
+
+// paso 3
+router.get("/callbackGithub2",
+    passport.authenticate("github",{failureRedirect:"/api/sessions/error"}),
+    (req, res)=>{
+
+        // req.user   generado por el middleware passport si todo sale OK en el authencicate...!!!
+        req.session.usuario=req.user
+
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({payload:"Login exitoso", usuarioLogueado: req.user});
+    }
+)
+
+router.post("/login", passport.authenticate("login", {failureRedirect:"/api/session/error"}), (req, res)=>{
+
+    req.session.usuario=req.user
+
+    res.setHeader('Content-Type','application/json');
+    return res.status(200).json({payload:"Login OK", usuarioLogueado: req.user});
+})
+
+router.get("/logout", (req, res)=>{
+    req.session.destroy(error=>{
+        if(error){
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`Error al hacer logout`})
+        }
+
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({payload:"Logout Exitoso...!!!"});
     })
 })

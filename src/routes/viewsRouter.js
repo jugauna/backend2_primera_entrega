@@ -7,7 +7,7 @@ const router = Router();
 const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
-router.get('/products', async (req, res) => {
+router.get('/products', auth, async (req, res) => {
 
     let usuario=req.session.usuario
     
@@ -33,7 +33,7 @@ router.get('/products', async (req, res) => {
     )
 });
 
-router.get('/realtimeproducts', async (req, res) => {
+router.get('/realtimeproducts', auth, async (req, res) => {
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
@@ -45,7 +45,7 @@ router.get('/realtimeproducts', async (req, res) => {
     )
 });
 
-router.get('/cart/:cid', async (req, res) => {
+router.get('/cart/:cid', auth, async (req, res) => {
     const response = await CartService.getProductsFromCartByID(req.params.cid);
 
     if (response.status === 'error') {

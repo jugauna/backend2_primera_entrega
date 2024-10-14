@@ -16,33 +16,42 @@ import { router as sessionsRouter } from './routes/sessionsRouter.js';
 import { router as vistasRouter } from './routes/vistas.router.js';
 import { connDB } from './ConnDB.js';
 import { config } from './config/config.js';
+import { initPassport } from './config/passport.config.js';
+import passport from 'passport';
 
 
 const PORT=config.PORT;
 
-const app = express();
-
-//Middlewares
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(sessions({
-    secret:config.SECRET_SESSION,
-    resave: true, 
-    saveUninitialized: true,
-    // store: 
-}))
-//app.use(express.static("./src/public"))
-app.use(express.static('public'));
-
-
-//const uri = 'mongodb://127.0.0.1:27017/entrega-final';
-//mongoose.connect(uri);
+const app=express();
 
 //Handlebars Config
 app.engine('handlebars', engine());
 //app.engine('handlebars', handlebars.engine());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname,'/views'));
+
+//Middlewares
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+//app.use(express.static("./src/public"))
+app.use(express.static('public'));
+
+app.use(sessions({
+    secret:config.SECRET_SESSION,
+    resave: true, 
+    saveUninitialized: true,
+    // store: 
+}))
+
+
+initPassport()
+app.use(passport.initialize())
+app.use(passport.session()) // solo si usamos session
+
+//const uri = 'mongodb://127.0.0.1:27017/entrega-final';
+//mongoose.connect(uri);
+
+
 
 //app.set('views', __dirname + '/../views');
 
@@ -61,7 +70,7 @@ app.use('/', vistasRouter)
 
 connDB()
 const httpServer = app.listen(PORT, () => {
-    console.log(`Start server in PORT ${PORT}`);
+    console.log(`Servidor escuchando en Puerto: ${PORT}`);
 });
 
 const io = new Server(httpServer);
