@@ -34,6 +34,7 @@ router.get('/products', auth, async (req, res) => {
 });
 
 router.get('/realtimeproducts', auth, async (req, res) => {
+    let usuario=req.session.usuario
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',

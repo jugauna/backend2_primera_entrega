@@ -13,35 +13,79 @@ if(mensaje){
 }
 
 
-btnSubmit.addEventListener("click", async(e)=>{
-    e.preventDefault()
-    let email=inputEmail.value 
-    let password=inputPassword.value 
-    if(!email || !password){
-        alert("Complete los datos")
-        return 
-    }
-    // validaciones x cuenta del alumno... 
-    let body={
-        email, password
+// btnSubmit.addEventListener("click", async(e)=>{
+//     e.preventDefault()
+//     let email=inputEmail.value 
+//     let password=inputPassword.value 
+//     if(!email || !password){
+//         alert("Complete los datos")
+//         return 
+//     }
+//     // validaciones x cuenta del alumno... 
+//     let body={
+//         email, password
+//     }
+
+//     let respuesta=await fetch("/api/sessions/login", {
+//         method:"post", 
+//         headers:{
+//             "Content-Type":"application/json"
+//         },
+//         body: JSON.stringify(body)
+//     })
+//     let datos=await respuesta.json()
+//     if(respuesta.status>=400){
+//         divMensajes.textContent=datos.error
+//         setTimeout(() => {
+//             divMensajes.textContent=""
+//         }, 3000);
+//     }else{
+//         // window.location.href=`/perfil?mensaje=Registro exitoso para ${datos.nuevoUsuario.email}`
+//         //window.location.href=`/perfil`
+//         window.location.href=`/products`
+//         //window.location.href=`/realtimeproducts`
+//     }
+// })
+
+btnSubmit.addEventListener("click", async (e) => {
+    e.preventDefault();
+    let email = inputEmail.value;
+    let password = inputPassword.value;
+    
+    if (!email || !password) {
+        alert("Complete los datos");
+        return;
     }
 
-    let respuesta=await fetch("/api/sessions/login", {
-        method:"post", 
-        headers:{
-            "Content-Type":"application/json"
+    let body = {
+        email, password
+    };
+
+    let respuesta = await fetch("/api/sessions/login", {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    })
-    let datos=await respuesta.json()
-    if(respuesta.status>=400){
-        divMensajes.textContent=datos.error
+    });
+
+    let datos = await respuesta.json();
+
+    if (respuesta.status >= 400) {
+        divMensajes.textContent = datos.error;
         setTimeout(() => {
-            divMensajes.textContent=""
+            divMensajes.textContent = "";
         }, 3000);
-    }else{
-        // window.location.href=`/perfil?mensaje=Registro exitoso para ${datos.nuevoUsuario.email}`
-        //window.location.href=`/perfil`
-        window.location.href=`/products`
+    } else {
+        // Verifica si el correo es 'adm@juan.com'
+        if (email === "adm@juan.com") {
+            // Redirige al administrador a /products
+            window.location.href = "/realtimeproducts";
+        } else {
+            // Redirige a otros usuarios a /realtimeproducts
+            window.location.href = "/products";
+        }
     }
-})
+});
+    
+    
