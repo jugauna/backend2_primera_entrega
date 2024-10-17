@@ -14,4 +14,3 @@ export const connDB=async()=>{
         console.log(`Error al conectar a DB: ${error}`)
     }
 }
-// connDB()

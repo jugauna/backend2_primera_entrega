@@ -7,7 +7,6 @@ const router = Router();
 const ProductService = new productDBService();
 
 router.get('/', async (req, res) => {
-//router.get('/', auth, async (req, res) => {
     const result = await ProductService.getAllProducts(req.query);
 
     res.send({

@@ -5,6 +5,8 @@ const inputRol=document.getElementById("rol")
 const btnSubmit=document.getElementById("btnSubmit")
 const divMensajes=document.getElementById("mensajes")
 
+
+
 btnSubmit.addEventListener("click", async(e)=>{
     e.preventDefault()
     let nombre=inputNombre.value 
@@ -15,10 +17,8 @@ btnSubmit.addEventListener("click", async(e)=>{
         alert("Complete los datos")
         return 
     }
-    // validaciones x cuenta del alumno... 
-    let body={
-        nombre, email, password, rol
-    }
+    
+    const body={nombre, email, password, rol} 
 
     let respuesta=await fetch("/api/sessions/registro", {
         method:"post", 

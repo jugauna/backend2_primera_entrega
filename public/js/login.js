@@ -12,73 +12,35 @@ if(mensaje){
     }, 3000);
 }
 
-
-// btnSubmit.addEventListener("click", async(e)=>{
-//     e.preventDefault()
-//     let email=inputEmail.value 
-//     let password=inputPassword.value 
-//     if(!email || !password){
-//         alert("Complete los datos")
-//         return 
-//     }
-//     // validaciones x cuenta del alumno... 
-//     let body={
-//         email, password
-//     }
-
-//     let respuesta=await fetch("/api/sessions/login", {
-//         method:"post", 
-//         headers:{
-//             "Content-Type":"application/json"
-//         },
-//         body: JSON.stringify(body)
-//     })
-//     let datos=await respuesta.json()
-//     if(respuesta.status>=400){
-//         divMensajes.textContent=datos.error
-//         setTimeout(() => {
-//             divMensajes.textContent=""
-//         }, 3000);
-//     }else{
-//         // window.location.href=`/perfil?mensaje=Registro exitoso para ${datos.nuevoUsuario.email}`
-//         //window.location.href=`/perfil`
-//         window.location.href=`/products`
-//         //window.location.href=`/realtimeproducts`
-//     }
-// })
-
-btnSubmit.addEventListener("click", async (e) => {
-    e.preventDefault();
-    let email = inputEmail.value;
-    let password = inputPassword.value;    
-    if (!email || !password) {
-        alert("Complete los datos");
-        return;
+btnSubmit.addEventListener("click", async(e)=>{
+    e.preventDefault()
+    let email=inputEmail.value 
+    let password=inputPassword.value 
+    if(!email || !password){
+        alert("Complete datos...!!!")
+        return 
     }
-    let body = {
-        email, password
-    };
-    let respuesta = await fetch("/api/sessions/login", {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json"
+    //console.log(email, password)
+    const body={email, password}
+    let respuesta=await fetch("/api/sessions/login", {
+        method:"post", 
+        headers:{
+            "Content-Type":"application/json"
         },
-        body: JSON.stringify(body)
-    });
-    let datos = await respuesta.json();
-    if (respuesta.status >= 400) {
-        divMensajes.textContent = datos.error;
-        setTimeout(() => {
-            divMensajes.textContent = "";
-        }, 3000);
-    } else {
-        // Redirige según el rol
-        if (datos.usuario.rol === "Administrador") {
-            window.location.href = "/realtimeproducts"; // Página para administradores
-        } else {
-            window.location.href = "/products"; // Página para usuarios
-        }
+        body:JSON.stringify(body)
+    })
+    let datos=await respuesta.json()
+    if(respuesta.status>=400){
+        let {error}=await respuesta.json()
+        alert(error)
+        return 
+    }else{
+        //alert(datos.payload)
+        console.log(datos.usuario)
+        //let datos=await respuesta.json()
+        console.log(datos)
+        alert(datos.payload)
+        // localStorage.setItem("token", datos.token
     }
-});
-    
+})
     

@@ -3,14 +3,16 @@ import { productDBService } from '../services/productDBService.js';
 import { cartDBService } from '../services/cartDBService.js';
 import { auth } from '../middleware/auth.js';
 
+//export const router=Router()
+
 const router = Router();
 const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
-router.get('/products', auth, async (req, res) => {
+router.get('/products',  async (req, res) => {
 
     let usuario=req.session.usuario
-    
+
     const products = await ProductService.getAllProducts(req.query);
 
     res.render(
@@ -33,8 +35,8 @@ router.get('/products', auth, async (req, res) => {
     )
 });
 
-router.get('/realtimeproducts', auth, async (req, res) => {
-    let usuario=req.session.usuario
+router.get('/realtimeproducts', async (req, res) => {
+    
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
