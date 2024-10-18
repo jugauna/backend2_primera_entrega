@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { auth } from '../middleware/auth.js';
+//import { auth } from '../middleware/auth.js';
 export const router=Router()
 
 router.get('/',(req,res)=>{
@@ -17,13 +17,15 @@ router.get('/login',(req,res)=>{
     res.status(200).render('login')
 })
 
-router.get('/perfil', auth, (req,res)=>{
+router.get('/perfil', (req,res)=>{
 
-    let usuario=req.session.usuario
+    //let usuario=req.session.usuario
     res.status(200).render('perfil', {
-        usuario, isLogin:req.session.usuario
+        //usuario, isLogin:req.session.usuario
     })
 })
+
+
 
 
 

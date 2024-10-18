@@ -87,7 +87,7 @@ export const initPassport=()=>{
             async(usuario, done)=>{
                 try {
                     //if(usuario.nombre==="Julian"){
-                    return done(null, false)
+                    //return done(null, false)
                     //}
                     return done(null, usuario)
                 } catch (error) {
@@ -100,40 +100,70 @@ export const initPassport=()=>{
 
 
 // paso 1:
+    // passport.use("github", 
+    //     new github.Strategy(
+    //         {
+    //             clientID:"Iv23li2LEICKEkCAWA78",
+    //             clientSecret:"7e1b52c0dc23248ae0488965780eb4437ed3c9f9",
+    //             callbackURL:"http://localhost:3000/api/sessions/callbackGithub2"
+    //         },
+    //         async (token, rt, profile, done)=>{
+    //             try {
+    //                 // console.log(profile)
+    //                 let {name, email}=profile._json
+    //                 if(!name || !email){
+    //                     return done(null, false)
+    //                 }
+    //                 let usuario=await UsuariosManager.getUserBy({email})
+    //                 if(!usuario){
+    //                     usuario=await UsuariosManager.create({nombre: name, email, profileGithub: profile})
+    //                 }
+    //                 return done(null, usuario)
+    //             } catch (error) {
+    //                 return done(error)
+    //             }
+    //         }
+    //     )
+    // )
+
     passport.use("github", 
         new github.Strategy(
             {
-                clientID:"Iv23li2LEICKEkCAWA78",
-                clientSecret:"7e1b52c0dc23248ae0488965780eb4437ed3c9f9",
-                callbackURL:"http://localhost:3000/api/sessions/callbackGithub2"
+                clientID: "Iv23li2LEICKEkCAWA78",  // ID del cliente de la aplicación de GitHub
+                clientSecret: "7e1b52c0dc23248ae0488965780eb4437ed3c9f9",  // Secreto del cliente proporcionado por GitHub
+                callbackURL: "http://localhost:3000/api/sessions/callbackGithub2",  // URL a la que GitHub redirige después de la autenticación
+                session: false  // Deshabilitar las sesiones para esta estrategia
             },
-            async (token, rt, profile, done)=>{
-                try {
-                    // console.log(profile)
-                    let {name, email}=profile._json
-                    if(!name || !email){
-                        return done(null, false)
-                    }
-                    let usuario=await UsuariosManager.getUserBy({email})
-                    if(!usuario){
-                        usuario=await UsuariosManager.create({nombre: name, email, profileGithub: profile})
-                    }
-                    return done(null, usuario)
-                } catch (error) {
-                    return done(error)
+        async (token, rt, profile, done) => {
+            try {
+                // Buscar si el usuario ya existe en la base de datos
+                let user = await UsuariosManager.getUserBy({ email: profile._json.email});
+                if (!user) {
+                    // Si no existe, crear un nuevo usuario
+                    user = await UsuariosManager.create({
+                    nombre: profile._json.nombre,  // Nombre del perfil obtenido de GitHub
+                    email: profile._json.email,  // Email obtenido de GitHub
+                    rol: "Usuario"  // Rol por defecto asignado al nuevo usuario
+                });
+                }
+                // Continuar con el proceso de autenticación, pasando el usuario
+                return done(null, user);
+            } catch (error) {
+                // Si hay un error, se lo pasamos a Passport
+                return done(error);
                 }
             }
         )
-    )
+    );      
 
 // paso 1 bis   // SOLO SI USO SESSIONS...!!!
-passport.serializeUser((usuario, done)=>{
-    return done(null, usuario._id)
-})
+//passport.serializeUser((usuario, done)=>{
+//    return done(null, usuario._id)
+//})
 
-passport.deserializeUser(async(id, done)=>{
-    let usuario=await UsuariosManager.getUserBy({_id:id})
-    return done(null, usuario)
-})
+//passport.deserializeUser(async(id, done)=>{
+//    let usuario=await UsuariosManager.getUserBy({_id:id})
+//    return done(null, usuario)
+//})
 
 }

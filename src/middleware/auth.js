@@ -1,15 +1,34 @@
 import jwt from "jsonwebtoken"
 import { config } from "../config/config.js";
 
+
+//const passportJWT = require('passport-jwt');
+//const JwtStrategy = passportJWT.Strategy;
+const ExtractJwt = passportJWT.ExtractJwt;
+
+// passport.use(new JwtStrategy({
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extraer el token desde la cabecera Authorization: Bearer <token>
+//   secretOrKey: config.SECRET
+// }, async (jwtPayload, done) => {
+//   try {
+//     const user = await UsuariosManager.getById(jwtPayload.id);
+//     if (user) {
+//       return done(null, user);
+//     } else {
+//       return done(null, false);
+//     }
+//   } catch (error) {
+//     return done(error, false);
+//   }
+// }));
+
 export const auth=(req, res, next)=>{
 
     console.log(req.cookies)
-
     if(!req.cookies.tokenCookie){
         res.setHeader('Content-Type','application/json');
         return res.status(401).json({error:`Unauthorized - no llega token`})
     }
-
     // console.log(req.headers.authorization)
     let token=req.cookies.tokenCookie    
     try {
@@ -18,7 +37,6 @@ export const auth=(req, res, next)=>{
         res.setHeader('Content-Type','application/json');
         return res.status(401).json({error:`${error.message}`})
     }
-
     next()
 }
 

@@ -16,10 +16,10 @@ btnSubmit.addEventListener("click", async(e)=>{
     if(!nombre || !email || !password || !rol){
         alert("Complete los datos")
         return 
-    }
-    
-    const body={nombre, email, password, rol} 
+    }    
 
+    const body={nombre, email, password, rol} 
+    
     let respuesta=await fetch("/api/sessions/registro", {
         method:"post", 
         headers:{
@@ -27,6 +27,7 @@ btnSubmit.addEventListener("click", async(e)=>{
         },
         body: JSON.stringify(body)
     })
+    
     let datos=await respuesta.json()
     if(respuesta.status>=400){
         divMensajes.textContent=datos.error

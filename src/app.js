@@ -1,9 +1,9 @@
 import __dirname from './utils.js';
-import { passportCall } from './utils.js';
+//import { passportCall } from './utils.js';
 import path from 'path';
 import express from 'express';
 import {engine} from 'express-handlebars';
-import sessions from "express-session";
+//import sessions from "express-session";
 import {Server} from 'socket.io';
 import productRouter from './routes/productRouter.js';
 import cartRouter from './routes/cartRouter.js';
@@ -16,6 +16,7 @@ import { config } from './config/config.js';
 import { initPassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from "cookie-parser"
+//import { auth } from '../middleware/auth.js';
 
 const PORT=config.PORT;
 const app=express();
@@ -28,21 +29,22 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser())
 app.use(express.static('public'));
-app.use(sessions({
-    secret:config.SECRET_SESSION,
-    resave: true, 
-    saveUninitialized: true,
-}))
+// app.use(sessions({
+//     secret:config.SECRET_SESSION,
+//     resave: true, 
+//     saveUninitialized: true,
+// }))
 
 initPassport()
 app.use(passport.initialize())
-app.use(passport.session()) // solo si usamos session
+//app.use(passport.session()) // solo si usamos session
 
 //Routers
-app.use('/api/products', passport.authenticate("current"), productRouter);
+//app.use("/api/villanos", passport.authenticate("current", {session:false}), villanosRouter)
+app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/', viewsRouter);
-app.use("/api/sessions", sessionsRouter)
+app.use("/api/sessions", sessionsRouter);
 app.use('/', vistasRouter)
 
 connDB()
