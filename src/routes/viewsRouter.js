@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { productDBService } from '../services/productDBService.js';
 import { cartDBService } from '../services/cartDBService.js';
-//import { auth } from '../middleware/auth.js';
+import { auth } from '../middleware/auth.js';
 
 //export const router=Router()
 
@@ -9,15 +9,16 @@ const router = Router();
 const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
-router.get('/products', async (req, res) => {
+router.get('/products', auth, async (req, res) => {
 
-    //let usuario=req.session.usuario
+    let usuario=req.user
 
     const products = await ProductService.getAllProducts(req.query);
 
     res.render(
         'index',
         {
+            usuario, isLogin: req.user,
             title: 'Productos',
             style: 'index.css',
             products: JSON.parse(JSON.stringify(products.docs)),
@@ -35,11 +36,14 @@ router.get('/products', async (req, res) => {
 });
 
 router.get('/realtimeproducts', async (req, res) => {
+
+    //let usuario=req.user
     
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
         {
+            //usuario, isLogin: req.user,
             title: 'Productos',
             style: 'index.css',
             products: JSON.parse(JSON.stringify(products.docs))

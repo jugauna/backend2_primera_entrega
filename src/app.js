@@ -16,7 +16,7 @@ import { config } from './config/config.js';
 import { initPassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from "cookie-parser"
-//import { auth } from '../middleware/auth.js';
+//import { isAuthenticated } from '../middleware/auth.js';
 
 const PORT=config.PORT;
 const app=express();
@@ -46,6 +46,7 @@ app.use('/api/carts', cartRouter);
 app.use('/', viewsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use('/', vistasRouter)
+
 
 connDB()
 const httpServer = app.listen(PORT, () => {

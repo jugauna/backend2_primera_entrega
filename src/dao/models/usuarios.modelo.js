@@ -4,12 +4,14 @@ export const usuariosModelo=mongoose.model(
     'usuarios',
     new mongoose.Schema(
         {
-            nombre: String, 
+            first_name: String,
+            last_name: String,
             email: {
                 type: String, unique:true
-            }, 
-            apellido: String, 
+            },
+            age: Number, 
             password: String,
+            cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
             rol: String,
         },
         {
