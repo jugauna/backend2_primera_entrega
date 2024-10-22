@@ -21,3 +21,9 @@ router.get('/perfil', auth, (req, res) => {
     let usuario = req.user;
     res.status(200).render('perfil', {usuario, isLogin: req.user});
 });
+
+router.get('/current', auth, (req, res) => {
+    console.log(req.user);
+    let usuario = req.user;
+    res.status(200).render('perfil', {usuario, isLogin: req.user});
+});
