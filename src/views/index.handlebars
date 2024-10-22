@@ -6,8 +6,6 @@
 
 {{>menu}}
 
-
-
 <div class="box">
     <div class="view-cart"><a id="button-cart" class="button">Ver Carrito</a></div>
     <h1>Productos a la venta</h1>
@@ -32,41 +30,5 @@
         {{/if}}
     </div>
 </div>
-
-{{!-- <script>
-        // Función para verificar si el usuario está logueado
-        async function verificarLogin() {
-            try {
-                let respuesta = await fetch("/api/sessions/check-login", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "same-origin" // Incluye cookies en la solicitud
-                });
-                console.log(respuesta)   
-                let datos = await respuesta.json();
-                let loginMessage = document.getElementById("login-message");
-                let tituloProductos = document.getElementById("titulo-productos");
-                console.log(datos)               
-                if (datos.isLoggedIn) {
-                    // Cambiar el texto y el título si el usuario está logueado
-                    loginMessage.textContent = `Hola ${datos.user.nombre}, bienvenido de nuevo.`;
-                    document.title = `Productos de ${datos.user.nombre}`; // Cambiar el título del documento
-                    tituloProductos.textContent = `Productos disponibles para ${datos.user.nombre}`;
-                } else {
-                    // Cambiar el texto si no está logueado
-                    loginMessage.textContent = `No has iniciado sesión. Por favor, loguéate para ver tus productos.`;
-                }
-            } catch (error) {
-                console.error("Error al verificar el estado de inicio de sesión:", error);
-                document.getElementById("login-message").textContent = `Hubo un error al cargar el estado de inicio de sesión.`;
-            }
-        }
-
-        // Llamar a la función para verificar el login cuando se carga la página
-        window.onload = verificarLogin;
-    </script> --}}
-
 
 <script src="/js/ecommerce.js"></script>

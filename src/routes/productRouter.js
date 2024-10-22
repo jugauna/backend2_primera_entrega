@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { productDBService } from '../services/productDBService.js';
 import { uploader } from '../utils/multerUtil.js';
-//import { auth } from '../middleware/auth.js';
 
 const router = Router();
 const ProductService = new productDBService();
