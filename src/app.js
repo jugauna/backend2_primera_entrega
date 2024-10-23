@@ -10,7 +10,7 @@ import websocket from './websocket.js';
 import { router as sessionsRouter } from './routes/sessionsRouter.js';
 import { router as vistasRouter } from './routes/vistas.router.js';
 import { connDB } from './ConnDB.js';
-import { config } from './config/config.js';
+import config from './config/config.js';
 import { initPassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from "cookie-parser"

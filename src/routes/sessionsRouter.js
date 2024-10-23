@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { UsuariosManager } from '../dao/UsuariosManager.js';
 import passport from 'passport';
-import jwt from "jsonwebtoken"
-import { config } from '../config/config.js';
+import jwt from "jsonwebtoken";
+import config from '../config/config.js';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { cookieExtractor } from '../config/passport.config.js';
 export const router=Router()
@@ -12,24 +12,24 @@ router.get("/error", (req, res)=>{
     return res.status(401).json({error:`Error al autenticar`})
 })
 
-const opts = {
-    jwtFromRequest: cookieExtractor, 
-    secretOrKey: config.SECRET    
-};
+// const opts = {
+//     jwtFromRequest: cookieExtractor, 
+//     secretOrKey: config.SECRET    
+// };
 
-passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
-    console.log("JWT Payload:", jwt_payload);     
-    try {
-        const user = await UsuariosManager.getUserBy(jwt_payload._id);
-        if (user) {
-            return done(null, user); 
-        } else {
-            return done(null, false); 
-        }
-    } catch (error) {
-        return done(error, false); 
-    }
-}));
+// passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
+//     console.log("JWT Payload:", jwt_payload);     
+//     try {
+//         const user = await UsuariosManager.getUserBy(jwt_payload._id);
+//         if (user) {
+//             return done(null, user); 
+//         } else {
+//             return done(null, false); 
+//         }
+//     } catch (error) {
+//         return done(error, false); 
+//     }
+// }));
 
 router.post(
     "/registro",

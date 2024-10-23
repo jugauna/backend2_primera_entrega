@@ -1,16 +1,12 @@
-//http://localhost:3000/api/sessions/callbackGithub2
-//Client ID: Iv23li2LEICKEkCAWA78
-//Cliet Secret: 7e1b52c0dc23248ae0488965780eb4437ed3c9f9
-
-import passport from "passport"
-import local from "passport-local"
-import github from "passport-github2"
-import passportJWT from "passport-jwt"
+import passport from "passport";
+import local from "passport-local";
+import github from "passport-github2";
+import passportJWT from "passport-jwt";
 //import jwt from 'jsonwebtoken';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { UsuariosManager } from "../dao/UsuariosManager.js"
-import { generaHash, validaHash } from "../utils.js"
-import { config } from "./config.js"
+import { UsuariosManager } from "../dao/UsuariosManager.js";
+import { generaHash, validaHash } from "../utils.js";
+import config from "./config.js";
 import { usuariosModelo } from "../dao/models/usuarios.modelo.js";
 
 

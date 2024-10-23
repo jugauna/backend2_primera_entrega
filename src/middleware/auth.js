@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken"
-import { config } from "../config/config.js";
+import jwt from "jsonwebtoken";
+import config from "../config/config.js";
 
 export const auth = (req, res, next) => {
     console.log('Cookies:', req.cookies);  
