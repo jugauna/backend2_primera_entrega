@@ -7,7 +7,6 @@ const ProductService = new productDBService();
 
 router.get('/', async (req, res) => {
     const result = await ProductService.getAllProducts(req.query);
-
     res.send({
         status: 'success',
         payload: result
@@ -15,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:pid', async (req, res) => {
-
     try {
         const result = await ProductService.getProductByID(req.params.pid);
         res.send({
@@ -31,7 +29,6 @@ router.get('/:pid', async (req, res) => {
 });
 
 router.post('/', uploader.array('thumbnails', 3), async (req, res) => {
-
     if (req.files) {
         req.body.thumbnails = [];
         req.files.forEach((file) => {
@@ -54,14 +51,12 @@ router.post('/', uploader.array('thumbnails', 3), async (req, res) => {
 });
 
 router.put('/:pid', uploader.array('thumbnails', 3), async (req, res) => {
-
     if (req.files) {
         req.body.thumbnails = [];
         req.files.forEach((file) => {
             req.body.thumbnails.push(file.filename);
         });
     }
-
     try {
         const result = await ProductService.updateProduct(req.params.pid, req.body);
         res.send({
@@ -77,7 +72,6 @@ router.put('/:pid', uploader.array('thumbnails', 3), async (req, res) => {
 });
 
 router.delete('/:pid', async (req, res) => {
-
     try {
         const result = await ProductService.deleteProduct(req.params.pid);
         res.send({

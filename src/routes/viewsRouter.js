@@ -8,12 +8,9 @@ const ProductService = new productDBService();
 const CartService = new cartDBService(ProductService);
 
 router.get('/products', auth, async (req, res) => {
-
     console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
-
     let usuario=req.user
     const products = await ProductService.getAllProducts(req.query);
-
     res.render(
         'index',
         {
@@ -35,10 +32,8 @@ router.get('/products', auth, async (req, res) => {
 });
 
 router.get('/realtimeproducts', auth, async (req, res) => {
-
     console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
-    let usuario=req.user
-    
+    let usuario=req.user    
     const products = await ProductService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
@@ -51,22 +46,23 @@ router.get('/realtimeproducts', auth, async (req, res) => {
     )
 });
 
-router.get('/cart/:cid', async (req, res) => {
+router.get('/cart/:cid', auth, async (req, res) => {
+    let usuario=req.user
     const response = await CartService.getProductsFromCartByID(req.params.cid);
-
     if (response.status === 'error') {
         return res.render(
             'notFound',
             {
+                usuario, isLogin: req.user,
                 title: 'Not Found',
                 style: 'index.css'
             }
         );
     }
-
     res.render(
         'cart',
         {
+            usuario, isLogin: req.user,
             title: 'Carrito',
             style: 'index.css',
             products: JSON.parse(JSON.stringify(response.products))

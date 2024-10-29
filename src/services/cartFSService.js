@@ -1,12 +1,10 @@
 import fs from 'fs';
 
-class cartFSService {
-    
+class cartFSService {    
     constructor(file, productFSService) {
         this.file = file;
         this.productFSService = productFSService;
     }
-
     async getAllCarts() {
         try {
             const carts = await fs.promises.readFile(this.file, 'utf-8');
@@ -16,53 +14,39 @@ class cartFSService {
             return []; 
         }
     }
-
     async getProductsFromCartByID(cid) {
         const carts = await this.getAllCarts();
-
         const cartFilter = carts.filter(cart => cart.id == cid);
-
         if (cartFilter.length > 0) {
             return cartFilter[0].products;
         }
-
         throw new Error(`El carrito ${cid} no existe!`);
     }
-
     async createCart() {
-
         const carts = await this.getAllCarts();
-
         const newCart = {
             id: this.getCartID(carts),
             products: []
         }
-
         carts.push(newCart);
-
         try {
             await fs.promises.writeFile(this.file, JSON.stringify(carts, null, '\t'));
-
             return newCart;
         } catch (error) {
             throw new Error('Error al crear el carrito');
         }
     }
-
     getCartID(carts) {
         
         const cartsLength = carts.length;
         if (cartsLength > 0) {
             return parseInt(carts[cartsLength -1].id) + 1;
         }
-
         return 1;
     }
-
     async addProductByID(cid, pid) {
         //Check if exist product
         await this.productFSService.getProductByID(pid);
-
         const carts = await this.getAllCarts();
         let i = 0;
         const cartFilter = carts.filter(
@@ -72,7 +56,6 @@ class cartFSService {
             }
         );
         console.log('index: ', i, 'cid: ', cid);
-
         if (cartFilter.length > 0) {
             let exist = false;
             for (let key in carts[i].products) {
@@ -81,7 +64,6 @@ class cartFSService {
                     carts[i].products[key].quantity++;
                 }
             }
-
             if (!exist) {
                 carts[i].products.push({
                     product: pid,
@@ -91,10 +73,8 @@ class cartFSService {
         } else {
             throw new Error(`El carrito ${cid} no existe!`);
         }
-
         try {
             await fs.promises.writeFile(this.file, JSON.stringify(carts, null, "\t"));
-
             return carts[i];
         } catch(e) {
             throw new Error('Error al actualizar el carrito');
