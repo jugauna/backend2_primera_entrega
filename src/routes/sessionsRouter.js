@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { UsuariosManager } from '../dao/UsuariosManager.js';
+//import { UsuariosManager } from '../dao/UsuariosManager.js';
 import passport from 'passport';
 import jwt from "jsonwebtoken";
 import config from '../config/config.js';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { cookieExtractor } from '../config/passport.config.js';
+//import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+//import { cookieExtractor } from '../config/passport.config.js';
+import { UsuariosDTO } from '../DTO/UsuariosDTO.js';
 export const router=Router()
 
 router.get("/error", (req, res)=>{
@@ -44,12 +45,16 @@ router.post(
     "/login",
     passport.authenticate("login", { session: false, failureRedirect: "/api/sessions/error" }),
     (req, res) => {
+        let {web}=req.body
     // Si la autenticación es exitosa, passport deja los datos del usuario en req.user
     if (!req.user) {
         return res.status(401).json({ error: 'Autenticación fallida' });
         }
+        req.user=new UsuariosDTO(req.user)
+        let usuario=new UsuariosDTO(req.user)
+        console.log(usuario)
         // Generar el token JWT con los datos del usuario
-        const token = jwt.sign(req.user, config.SECRET, { expiresIn: '1h' }
+        const token = jwt.sign({...usuario}, config.SECRET, { expiresIn: '1h' }
     );
     res.cookie("tokenCookie", token, {httpOnly: true});
         if (req.user.rol === "Administrador") {

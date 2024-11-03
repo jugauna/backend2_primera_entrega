@@ -1,16 +1,16 @@
 import { Router } from 'express';
-import { productDBService } from '../services/productDBService.js';
-import { cartDBService } from '../services/cartDBService.js';
+import productDBService from '../services/productDBService.js';
+import cartDBService from '../services/cartDBService.js';
 import { auth } from '../middleware/auth.js';
 
 const router = Router();
-const ProductService = new productDBService();
-const CartService = new cartDBService(ProductService);
+const productService = new productDBService();
+const cartService = new cartDBService(productService);
 
 router.get('/products', auth, async (req, res) => {
     console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
     let usuario=req.user
-    const products = await ProductService.getAllProducts(req.query);
+    const products = await productService.getAllProducts(req.query);
     res.render(
         'index',
         {
@@ -34,7 +34,7 @@ router.get('/products', auth, async (req, res) => {
 router.get('/realtimeproducts', auth, async (req, res) => {
     console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
     let usuario=req.user    
-    const products = await ProductService.getAllProducts(req.query);
+    const products = await productService.getAllProducts(req.query);
     res.render(
         'realTimeProducts',
         {
@@ -48,7 +48,7 @@ router.get('/realtimeproducts', auth, async (req, res) => {
 
 router.get('/cart/:cid', auth, async (req, res) => {
     let usuario=req.user
-    const response = await CartService.getProductsFromCartByID(req.params.cid);
+    const response = await cartService.getProductsFromCartByID(req.params.cid);
     if (response.status === 'error') {
         return res.render(
             'notFound',

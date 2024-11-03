@@ -1,5 +1,7 @@
 import { cartModel } from "../dao/models/cartModel.js";
 
+
+
 class cartDBService {
     constructor(productDBService) {
         this.productDBService = productDBService;
@@ -13,8 +15,15 @@ class cartDBService {
         return cart;
     }
     async createCart() {
-        return await cartModel.create({products: []});
+        try {
+            return await cartModel.create({products: []});
+        } catch (error) {
+            throw new Error('Error al crear el carrito');
+        }
     }
+    // async createCart() {
+    //     return await cartModel.create({products: []});
+    // }
     async addProductByID(cid, pid) {
         await this.productDBService.getProductByID(pid);
         const cart = await cartModel.findOne({ _id: cid});
@@ -77,4 +86,4 @@ class cartDBService {
     }
 }
 
-export { cartDBService };
+export default cartDBService;

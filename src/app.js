@@ -14,6 +14,7 @@ import config from './config/config.js';
 import { initPassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from "cookie-parser"
+//import { errorHandler } from './errorHandler.js';
 
 const PORT=config.PORT;
 const app=express();
@@ -36,6 +37,7 @@ app.use('/', viewsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use('/', vistasRouter)
 
+//app.use(errorHandler);
 
 connDB()
 const httpServer = app.listen(PORT, () => {
@@ -45,3 +47,15 @@ const httpServer = app.listen(PORT, () => {
 const io = new Server(httpServer);
 
 websocket(io);
+
+
+// cartController.js
+// export async function createCart(req, res, next) {
+//     try {
+//         // Lógica para crear el carrito
+//         const newCart = await Cart.create(req.body);
+//         res.status(201).json(newCart);
+//     } catch (err) {
+//         next(err); // Pasa el error al middleware de manejo de errores
+//     }
+// }

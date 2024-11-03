@@ -18,10 +18,9 @@ class productDBService {
         if (products.nextLink && paginate.sort) products.nextLink += `&sort=${params.sort}`
         return products;
     }
-    async getProductByID(pid) {
-        const product = await productModel.findOne({_id: pid});
-        if (!product) throw new Error(`El producto ${pid} no existe!`);
-        return product;
+    async getProductByID(productId) {
+        // Lógica para obtener el producto por ID
+        // ...
     }
     async createProduct(product) {
         const {title, description, code, price, stock, category, thumbnails} = product;
@@ -40,4 +39,4 @@ class productDBService {
     }
 }
 
-export { productDBService };
+export default productDBService;

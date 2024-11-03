@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { productDBService } from '../services/productDBService.js';
-import { cartDBService } from '../services/cartDBService.js';
+import productDBService from '../services/productDBService.js';
+import cartDBService from '../services/cartDBService.js';
 
 const router = Router();
-const ProductService = new productDBService();
-const CartService = new cartDBService(ProductService);
+const productService = new productDBService();
+const cartService = new cartDBService(productService);
+
 
 router.get('/:cid', async (req, res) => {
     try {
-        const result = await CartService.getProductsFromCartByID(req.params.cid);
+        const result = await cartService.getProductsFromCartByID(req.params.cid);
         res.send({
             status: 'success',
             payload: result
@@ -23,7 +24,7 @@ router.get('/:cid', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const result = await CartService.createCart();
+        const result = await cartService.createCart();
         res.send({
             status: 'success',
             payload: result
@@ -38,7 +39,7 @@ router.post('/', async (req, res) => {
 
 router.post('/:cid/product/:pid', async (req, res) => {
     try {
-        const result = await CartService.addProductByID(req.params.cid, req.params.pid)
+        const result = await cartService.addProductByID(req.params.cid, req.params.pid)
         res.send({
             status: 'success',
             payload: result
@@ -53,7 +54,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
 router.delete('/:cid/product/:pid', async (req, res) => {
     try {
-        const result = await CartService.deleteProductByID(req.params.cid, req.params.pid)
+        const result = await cartService.deleteProductByID(req.params.cid, req.params.pid)
         res.send({
             status: 'success',
             payload: result
@@ -68,7 +69,7 @@ router.delete('/:cid/product/:pid', async (req, res) => {
 
 router.put('/:cid', async (req, res) => {
     try {
-        const result = await CartService.updateAllProducts(req.params.cid, req.body.products)
+        const result = await cartService.updateAllProducts(req.params.cid, req.body.products)
         res.send({
             status: 'success',
             payload: result
@@ -83,7 +84,7 @@ router.put('/:cid', async (req, res) => {
 
 router.put('/:cid/product/:pid', async (req, res) => {
     try {
-        const result = await CartService.updateProductByID(req.params.cid, req.params.pid, req.body.quantity)
+        const result = await cartService.updateProductByID(req.params.cid, req.params.pid, req.body.quantity)
         res.send({
             status: 'success',
             payload: result
@@ -98,7 +99,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
 
 router.delete('/:cid', async (req, res) => {
     try {
-        const result = await CartService.deleteAllProducts(req.params.cid)
+        const result = await cartService.deleteAllProducts(req.params.cid)
         res.send({
             status: 'success',
             payload: result

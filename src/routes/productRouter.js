@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { productDBService } from '../services/productDBService.js';
+import productDBService from '../services/productDBService.js';
 import { uploader } from '../utils/multerUtil.js';
 
 const router = Router();
@@ -13,18 +13,15 @@ router.get('/', async (req, res) => {
     });
 });
 
-router.get('/:pid', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const result = await ProductService.getProductByID(req.params.pid);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
+        const product = await ProductService.getProductByID(req.params.id);
+        if (!product) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+        res.json(product);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
