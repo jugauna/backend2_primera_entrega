@@ -1,42 +1,25 @@
-import productModel from "../dao/models/productModel.js";
+import ProductDAO from '../dao/ProductDAO.js';
 
-class productDBService {
-    async getAllProducts(params) {
-        const paginate = {
-            page: params.page ? parseInt(params.page) : 1,
-            limit: params.limit ? parseInt(params.limit) : 10,
-        }
-        if (params.sort && (params.sort === 'asc' || params.sort === 'desc')) paginate.sort = { price: params.sort}
-        const products = await productModel.paginate({}, paginate);
-        products.prevLink = products.hasPrevPage?`http://localhost:3000/products?page=${products.prevPage}` : null;
-        products.nextLink = products.hasNextPage?`http://localhost:3000/products?page=${products.nextPage}` : null;
-        //Add limit
-        if (products.prevLink && paginate.limit !== 10) products.prevLink += `&limit=${paginate.limit}`
-        if (products.nextLink && paginate.limit !== 10) products.nextLink += `&limit=${paginate.limit}`
-        //Add sort
-        if (products.prevLink && paginate.sort) products.prevLink += `&sort=${params.sort}`
-        if (products.nextLink && paginate.sort) products.nextLink += `&sort=${params.sort}`
-        return products;
+class ProductDBService {
+    async getAllProducts(query) {
+        return await ProductDAO.getAll(query);
     }
-    async getProductByID(productId) {
-        // Lógica para obtener el producto por ID
-        // ...
+
+    async getProductById(id) {
+        return await ProductDAO.getById(id);
     }
-    async createProduct(product) {
-        const {title, description, code, price, stock, category, thumbnails} = product;
-        if (!title || !description || !code || !price || !stock || !category) {
-            throw new Error('Error al crear el producto');
-        }
-        return await productModel.create({title, description, code, price, stock, category, thumbnails});  
+
+    async createProduct(productData) {
+        return await ProductDAO.create(productData);
     }
-    async updateProduct(pid, productUpdate) {
-        return await productModel.updateOne({_id: pid}, productUpdate);
+
+    async updateProduct(id, updateData) {
+        return await ProductDAO.update(id, updateData);
     }
-    async deleteProduct(pid) {
-        const result = await productModel.deleteOne({_id: pid});
-        if (result.deletedCount === 0) throw new Error(`El producto ${pid} no existe!`);
-        return result;
+
+    async deleteProduct(id) {
+        return await ProductDAO.delete(id);
     }
 }
 
-export default productDBService;
+export default ProductDBService;

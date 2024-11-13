@@ -36,8 +36,8 @@ btnSubmit.addEventListener("click", async (e) => {
         let datos = await respuesta.json();
         console.log(datos);
         alert(datos.payload);
-        // Redirigir según el rol
+        localStorage.setItem('userId', datos.usuarioLogueado.id);
+        localStorage.setItem('token', datos.token);
         window.location.href = datos.redirectUrl;
     }
-});
-
+})

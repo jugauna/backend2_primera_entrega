@@ -1,86 +1,67 @@
 import { Router } from 'express';
-import productDBService from '../services/productDBService.js';
-import { uploader } from '../utils/multerUtil.js';
+import productController from '../controllers/productController.js';
+//import { auth } from '../middleware/auth.js';
+import passport from 'passport';
 
 const router = Router();
-const ProductService = new productDBService();
 
-router.get('/', async (req, res) => {
-    const result = await ProductService.getAllProducts(req.query);
-    res.send({
-        status: 'success',
-        payload: result
-    });
-});
+router.get('/', productController.getAllProducts);
+router.get('/:pid', productController.getProductById);
+router.post('/', productController.createProduct);
+router.put('/:pid', productController.updateProduct);
+router.delete('/:pid', productController.deleteProduct);
 
-router.get('/:id', async (req, res) => {
-    try {
-        const product = await ProductService.getProductByID(req.params.id);
-        if (!product) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
+//passport.authenticate("current", {session:false}),
+router.get('/products', passport.authenticate("current", {session:false}), async (req, res) => {
+    console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
+    let usuario = req.user;
+    const products = await ProductService.getAllProducts(req.query);
+    if (!products || !products.docs) {
+        return res.render('notFound', {
+            usuario, isLogin: req.user,
+            title: 'Not Found',
+            style: 'index.css'
+        });
+    }
+    res.render(
+        'index',
+        {
+            usuario, isLogin: req.user,
+            title: 'Productos',
+            style: 'index.css',
+            products: JSON.parse(JSON.stringify(products.docs)),
+            prevLink: {
+                exist: products.prevLink ? true : false,
+                link: products.prevLink
+            },
+            nextLink: {
+                exist: products.nextLink ? true : false,
+                link: products.nextLink
+            }
         }
-        res.json(product);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    );
 });
 
-router.post('/', uploader.array('thumbnails', 3), async (req, res) => {
-    if (req.files) {
-        req.body.thumbnails = [];
-        req.files.forEach((file) => {
-            req.body.thumbnails.push(file.path);
+router.get('/realtimeproducts', passport.authenticate("current", {session:false}), async (req, res) => {
+    console.log(req.user);  // Esto debería mostrar los datos del usuario autenticado en la consola
+    let usuario = req.user;
+    const products = await ProductService.getAllProducts(req.query);
+    if (!products || !products.docs) {
+        return res.render('notFound', {
+            usuario, isLogin: req.user,
+            title: 'Not Found',
+            style: 'index.css'
         });
     }
-
-    try {
-        const result = await ProductService.createProduct(req.body);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.put('/:pid', uploader.array('thumbnails', 3), async (req, res) => {
-    if (req.files) {
-        req.body.thumbnails = [];
-        req.files.forEach((file) => {
-            req.body.thumbnails.push(file.filename);
-        });
-    }
-    try {
-        const result = await ProductService.updateProduct(req.params.pid, req.body);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.delete('/:pid', async (req, res) => {
-    try {
-        const result = await ProductService.deleteProduct(req.params.pid);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
+    res.render(
+        'realTimeProducts',
+        {
+            usuario, isLogin: req.user,
+            title: 'Productos',
+            style: 'index.css',
+            products: JSON.parse(JSON.stringify(products.docs))
+        }
+    );
 });
 
 export default router;

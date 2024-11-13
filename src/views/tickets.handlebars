@@ -1,0 +1,45 @@
+<!-- src/views/tickets.handlebars -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets</title>
+</head>
+<body>
+    <h1>Tickets</h1>
+    <button id="btnTickets">Cargar Tickets</button>
+    <div id="tickets"></div>
+
+    <script>
+        const divTickets = document.querySelector("#tickets");
+        const btnTickets = document.querySelector("#btnTickets");
+
+        btnTickets.addEventListener("click", async (e) => {
+            e.preventDefault();
+            divTickets.textContent = "";
+
+            let respuesta = await fetch("http://localhost:3000/api/tickets");
+            if (respuesta.status >= 400) {
+                divTickets.textContent = `Error al cargar tickets`;
+                return;
+            }
+
+            let { tickets } = await respuesta.json();
+            console.log(tickets);
+            tickets.forEach(t => {
+                let parrafo = document.createElement("p");
+                parrafo.innerHTML = `Código: <b>${t.code}</b> | Fecha: <b>${new Date(t.purchase_datetime).toLocaleString()}</b> | Monto: <b>$${t.amount}</b> | Comprador: <b>${t.purchaser}</b>`;
+                let productList = document.createElement("ul");
+                t.products.forEach(p => {
+                    let productItem = document.createElement("li");
+                    productItem.innerHTML = `Producto: <b>${p.product.name}</b> | Cantidad: <b>${p.quantity}</b>`;
+                    productList.appendChild(productItem);
+                });
+                let hr = document.createElement("hr");
+                divTickets.append(parrafo, productList, hr);
+            });
+        });
+    </script>
+</body>
+</html>

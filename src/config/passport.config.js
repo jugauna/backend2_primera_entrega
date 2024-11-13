@@ -11,25 +11,28 @@ import { usuariosModelo } from "../dao/models/usuarios.modelo.js";
 
 
 
+
 export const cookieExtractor = (req) => {
     let token = null;
     if (req && req.cookies) {
-        token = req.cookies['jwt'];  
+        //token = req.cookies['current'];  
+        token = req.cookies.tokenCookie;
     }
     return token;
-    console.log(token)
+    //console.log(token)
 };
 
 export const initPassport=()=>{
     const opts = {
-        jwtFromRequest: cookieExtractor,  
+        //jwtFromRequest: cookieExtractor,  
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
         secretOrKey: config.SECRET    
     };
     
     passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
-        console.log("JWT Payload:", jwt_payload);  
+        console.log("JWT Payloaddd:", jwt_payload);  
         try {
-            const user = await usuariosModelo.findById (jwt_payload._id);  
+            const user = await usuariosModelo.findById(jwt_payload.id).populate('cart');   
             console.log("User Found:", user);  
             if (user) {
                 return done(null, user); 
@@ -80,7 +83,12 @@ export const initPassport=()=>{
                     }
                     password=generaHash(password)
                     let nuevoUsuario=await UsuariosManager.create({first_name, last_name, edad, email:username, password, rol})
+                    // Crear un carrito para el nuevo usuario
+                    const newCart = await cartService.createCart();
+                    nuevoUsuario.cart = newCart._id;
+                    await nuevoUsuario.save();
                     console.log(`Registro por passport...!!!`)
+                    
                     return done(null, nuevoUsuario)
                 } catch (error) {
                     return done(error)

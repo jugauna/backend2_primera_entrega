@@ -1,36 +1,20 @@
 import { Router } from 'express';
-//import { UsuariosManager } from '../dao/UsuariosManager.js';
+import { UsuariosManager } from '../dao/UsuariosManager.js';
 import passport from 'passport';
 import jwt from "jsonwebtoken";
 import config from '../config/config.js';
-//import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-//import { cookieExtractor } from '../config/passport.config.js';
-import { UsuariosDTO } from '../DTO/UsuariosDTO.js';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { cookieExtractor } from '../config/passport.config.js';
+import { UsuariosDTO } from '..//dto/UsuariosDTO.js';
+import { usuariosModelo } from '../dao/models/usuarios.modelo.js';
+
 export const router=Router()
+
 
 router.get("/error", (req, res)=>{
     res.setHeader('Content-Type','application/json');
     return res.status(401).json({error:`Error al autenticar`})
 })
-
-// const opts = {
-//     jwtFromRequest: cookieExtractor, 
-//     secretOrKey: config.SECRET    
-// };
-
-// passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
-//     console.log("JWT Payload:", jwt_payload);     
-//     try {
-//         const user = await UsuariosManager.getUserBy(jwt_payload._id);
-//         if (user) {
-//             return done(null, user); 
-//         } else {
-//             return done(null, false); 
-//         }
-//     } catch (error) {
-//         return done(error, false); 
-//     }
-// }));
 
 router.post(
     "/registro",
@@ -45,37 +29,37 @@ router.post(
     "/login",
     passport.authenticate("login", { session: false, failureRedirect: "/api/sessions/error" }),
     (req, res) => {
-        let {web}=req.body
-    // Si la autenticación es exitosa, passport deja los datos del usuario en req.user
-    if (!req.user) {
-        return res.status(401).json({ error: 'Autenticación fallida' });
+        let { web } = req.body;
+        // Si la autenticación es exitosa, passport deja los datos del usuario en req.user
+        if (!req.user) {
+            return res.status(401).json({ error: 'Autenticación fallida' });
         }
-        req.user=new UsuariosDTO(req.user)
-        let usuario=new UsuariosDTO(req.user)
-        console.log(usuario)
-        // Generar el token JWT con los datos del usuario
-        const token = jwt.sign({...usuario}, config.SECRET, { expiresIn: '1h' }
-    );
-    res.cookie("tokenCookie", token, {httpOnly: true});
+        const usuario = new UsuariosDTO(req.user);
+        console.log(usuario);
+        console.log(usuario.cart);
+        console.log(usuario._id);
+        console.log(req.user._id);        
+        const token = jwt.sign({ id: usuario._id, first_name: usuario.first_name, email: usuario.email, rol: usuario.rol }, config.SECRET, { expiresIn: '1h' });
+        res.cookie("tokenCookie", token, { httpOnly: true });
         if (req.user.rol === "Administrador") {
-            console.log('Administrador Logueado con Passport!!!')
+            console.log('Administrador Logueado con Passport!!!');
             return res.status(200).json({
                 payload: `Login exitoso para ${req.user.first_name} Rol: ${req.user.rol}`,
                 usuarioLogueado: req.user,
                 token,
                 redirectUrl: "/realtimeproducts"
             });
-            } else {
-                console.log('Usuario Logueado con Passport!!!')
-                return res.status(200).json({
-                    payload: `Login exitoso User: ${req.user.first_name} Rol: ${req.user.rol}`,
-                    usuarioLogueado: req.user,
-                    token,
-                    redirectUrl: "/products" // Redirigir al usuario común a /products
-                });
-            }
+        } else {
+            console.log('Usuario Logueado con Passport!!!');
+            return res.status(200).json({
+                payload: `Login exitoso User: ${req.user.first_name} Rol: ${req.user.rol} Id: ${req.user._id}`,
+                usuarioLogueado: req.user,
+                token,
+                redirectUrl: "/products" // Redirigir al usuario común a /products
+            });
         }
-    );
+    }
+);
 
 router.post('/logout', (req, res) => {
     res.clearCookie('tokenCookie');  

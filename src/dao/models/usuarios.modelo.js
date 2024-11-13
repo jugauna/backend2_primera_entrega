@@ -11,7 +11,9 @@ export const usuariosModelo=mongoose.model(
             },
             age: Number, 
             password: String,
-            cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
+            cart: {
+                type: mongoose.Schema.Types.ObjectId, ref:"carts"
+            },
             rol: String,
         },
         {
@@ -19,4 +21,4 @@ export const usuariosModelo=mongoose.model(
             strict: false
         }
     )
-)
+);

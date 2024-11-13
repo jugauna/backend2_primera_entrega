@@ -22,7 +22,7 @@ btnSubmit.addEventListener("click", async(e)=>{
         return 
     }    
 
-    const body={first_name, last_name, email, edad, password, rol} 
+    const body={first_name, last_name, email, edad, password, rol}  
     
     let respuesta=await fetch("/api/sessions/registro", {
         method:"post", 

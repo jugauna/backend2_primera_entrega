@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
+import { Router } from 'express';
 
 export const auth = (req, res, next) => {
     console.log('Cookies:', req.cookies);  

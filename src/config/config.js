@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-//console.log('Mostrar key:', process.env.SECRET); 
-
 export default {
     SECRET:process.env.SECRET,
     SECRET_SESSION:process.env.SECRET_SESSION,    

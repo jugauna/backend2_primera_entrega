@@ -1,0 +1,23 @@
+<!-- src/views/createTicket.handlebars -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Ticket</title>
+</head>
+<body>
+    <h1>Cargar Ticket</h1>
+    <form action="/tickets" method="POST">
+        <div>
+            <label for="amount">Monto:</label>
+            <input type="number" id="amount" name="amount" required>
+        </div>
+        <div>
+            <label for="purchaser">Comprador:</label>
+            <input type="email" id="purchaser" name="purchaser" required>
+        </div>
+        <button type="submit">Cargar Ticket</button>
+    </form>
+</body>
+</html>
