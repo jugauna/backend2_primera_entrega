@@ -3,7 +3,7 @@ export class UsuariosDTO{
         this.id=usuario.id
         this.first_name=usuario.first_name.toUpperCase()
         this.email=usuario.email
-        this.rol=usuario.rol?usuario.rol:"user"
+        this.rol=usuario.rol
         this.cart=usuario.cart
     }
 }

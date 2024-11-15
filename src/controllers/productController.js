@@ -1,8 +1,11 @@
-import productDBService from '../services/productDBService.js';
+import ProductDBService from '../services/productDBService.js';
+
+
+const productService = new ProductDBService();
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await productDBService.getAllProducts(req.query);
+        const products = await productService.getAllProducts(req.query);
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -12,7 +15,7 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     const { pid } = req.params;
     try {
-        const product = await productDBService.getProductById(pid);
+        const product = await productService.getProductById(pid);
         if (!product) {
             return res.status(404).json({ error: `Producto con id ${pid} no encontrado` });
         }
@@ -23,9 +26,9 @@ const getProductById = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-    const { title, description, price, category, stock } = req.body;
+    const { title, description, code, price, category, stock } = req.body;
     try {
-        const newProduct = await productDBService.createProduct({ title, description, price, category, stock });
+        const newProduct = await productService.createProduct({ title, description, code, price, category, stock });
         res.status(201).json(newProduct);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -36,7 +39,7 @@ const updateProduct = async (req, res) => {
     const { pid } = req.params;
     const updateData = req.body;
     try {
-        const updatedProduct = await productDBService.updateProduct(pid, updateData);
+        const updatedProduct = await productService.updateProduct(pid, updateData);
         if (!updatedProduct) {
             return res.status(404).json({ error: `Producto con id ${pid} no encontrado` });
         }
@@ -49,7 +52,7 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
     const { pid } = req.params;
     try {
-        const deletedProduct = await productDBService.deleteProduct(pid);
+        const deletedProduct = await productService.deleteProduct(pid);
         if (!deletedProduct) {
             return res.status(404).json({ error: `Producto con id ${pid} no encontrado` });
         }

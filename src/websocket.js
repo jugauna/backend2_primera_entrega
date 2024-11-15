@@ -1,6 +1,6 @@
-import productDBService from './services/ProductDBService.js';
+import ProductDBService from './services/productDBService.js';
 
-const productService = productDBService;
+const productService = ProductDBService;
 
 export default (io) => {
     io.on("connection", (socket) => {

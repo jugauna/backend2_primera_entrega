@@ -7,7 +7,7 @@ import passport from 'passport';
 
 const router = Router();
 const productService = new ProductDBService(); // Crear una instancia de ProductDBService
-const cartService = new CartDBService(); // Crear una instancia de CartDBService
+const cartService = new CartDBService(productService); // Crear una instancia de CartDBService
 const ticketService = new TicketService();
 
 router.get('/tickets', async (req, res, next) => {

@@ -8,14 +8,13 @@ import { UsuariosManager } from "../dao/UsuariosManager.js";
 import { generaHash, validaHash } from "../utils.js";
 import config from "./config.js";
 import { usuariosModelo } from "../dao/models/usuarios.modelo.js";
-
-
+import CartDBService from "../services/cartDBService.js";
 
 
 export const cookieExtractor = (req) => {
     let token = null;
     if (req && req.cookies) {
-        //token = req.cookies['current'];  
+        //token = req.cookies['jwt'];  
         token = req.cookies.tokenCookie;
     }
     return token;
@@ -44,6 +43,7 @@ export const initPassport=()=>{
         }
     }));
     
+
     const logout = async () => {
         try {
             const response = await fetch('/logout', {
@@ -60,42 +60,79 @@ export const initPassport=()=>{
             console.error('Error:', error);
         }
     };
-    
+
     passport.use("registro", 
         new local.Strategy(
             {
                 passReqToCallback: true, 
                 usernameField: "email"
             },
-            async(req, username, password, done)=>{
-                console.log("ingresa")
+            async (req, username, password, done) => {
+                console.log("ingresa registro");
+                console.log(username);
+                console.log(password);
+                console.log(req.body);
                 try {
-                    let {first_name, last_name, edad, rol}=req.body
-                    if(!first_name || !rol){
-                        //console.log(`Faltan datos`)
-                        return done(null, false, { message: "Nombre y rol son obligatorios" })
+                    let { email, rol } = req.body
+                    if (!email || !rol) {
+                        return done(null, false, { message: "Mail y rol son obligatorios" });
                     }
-                    let existe=await UsuariosManager.getUserBy({email:username})
-                    if(existe){
-                        //console.log(`existe`)
-                        //console.log(existe)
-                        return done(null, false, {message:`Ya existe un usuario con email ${username}`})
+                    let existe = await UsuariosManager.getBy({ email: username });
+                    if (existe) {
+                        return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
-                    password=generaHash(password)
-                    let nuevoUsuario=await UsuariosManager.create({first_name, last_name, edad, email:username, password, rol})
-                    // Crear un carrito para el nuevo usuario
-                    const newCart = await cartService.createCart();
+                    password = generaHash(password);
+                    let nuevoUsuario = await UsuariosManager.create({ first_name, last_name, email:username, age, password, rol});
+                    //Crear un carrito para el nuevo usuario
+                    const newCart = await CartDBService.createCart();
                     nuevoUsuario.cart = newCart._id;
                     await nuevoUsuario.save();
-                    console.log(`Registro por passport...!!!`)
+                    console.log(`Registro por passport...!!!`);
                     
-                    return done(null, nuevoUsuario)
+                    return done(null, nuevoUsuario);
                 } catch (error) {
-                    return done(error)
+                    return done(error);
                 }
             }
         )
-    )
+    );
+    
+    
+    // passport.use("registro", 
+    //     new local.Strategy(
+    //         {
+    //             passReqToCallback: true, 
+    //             usernameField: "email"
+    //         },
+    //         async(req, username, password, done)=>{
+    //             console.log("ingresa")
+    //             try {
+    //                 let {first_name, last_name, edad, email:username, password, rol, cart}=req.body
+    //                 if(!username || !rol){
+    //                     //console.log(`Faltan datos`)
+    //                     return done(null, false, { message: "Mail y rol son obligatorios" })
+    //                 }
+    //                 let existe=await UsuariosManager.getUserBy({email:username})
+    //                 if(existe){
+    //                     //console.log(`existe`)
+    //                     //console.log(existe)
+    //                     return done(null, false, {message:`Ya existe un usuario con email ${username}`})
+    //                 }
+    //                 password=generaHash(password)
+    //                 let nuevoUsuario=await UsuariosManager.create({first_name, last_name, edad, email:username, password, rol})
+    //                 // Crear un carrito para el nuevo usuario
+    //                 const newCart = await CartDBService.createCart();
+    //                 nuevoUsuario.cart = newCart._id;
+    //                 await nuevoUsuario.save();
+    //                 console.log(`Registro por passport...!!!`)
+                    
+    //                 return done(null, nuevoUsuario)
+    //             } catch (error) {
+    //                 return done(error)
+    //             }
+    //         }
+    //     )
+    // )
 
     passport.use("login", 
         new local.Strategy(
@@ -104,7 +141,7 @@ export const initPassport=()=>{
             },
             async(username, password, done)=>{
                 try {
-                    let usuario=await UsuariosManager.getUserBy({email:username})
+                    let usuario=await UsuariosManager.getBy({email:username})
                     if(!usuario){
                         return done(null, false)
                     }

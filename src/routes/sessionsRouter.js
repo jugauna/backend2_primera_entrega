@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import { UsuariosManager } from '../dao/UsuariosManager.js';
 import passport from 'passport';
 import jwt from "jsonwebtoken";
 import config from '../config/config.js';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { cookieExtractor } from '../config/passport.config.js';
 import { UsuariosDTO } from '..//dto/UsuariosDTO.js';
-import { usuariosModelo } from '../dao/models/usuarios.modelo.js';
+
+
 
 export const router=Router()
 
@@ -17,11 +15,12 @@ router.get("/error", (req, res)=>{
 })
 
 router.post(
-    "/registro",
-    passport.authenticate("registro", {session: false, failureRedirect:"/api/sessions/error"}),
-    //passportCall("registro"),
+    "/registro", 
+    passport.authenticate("registro", { session: false, failureRedirect:"/api/sessions/error"}), 
     (req, res)=>{
-        return res.status(201).json({payload:`Registro exitoso para ${req.user.nombre}`, usuario:req.user});
+        // si sale bien el authenticate, passport deja un req.user, con los datos del usuario
+        res.setHeader('Content-Type','application/json');
+        return res.status(201).json({payload:`Registro exitoso`, usuario:req.user});
     }
 )
 
